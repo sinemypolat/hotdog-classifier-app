@@ -1,13 +1,17 @@
-import os
-import flask 
-from flask import Flask, redirect, url_for, request, render_template
-import torch
-from torchvision import transforms
-import torch.nn.functional as F
-from PIL import Image
 import io
+import os
 
-app = flask.Flask(__name__)
+from flask import Flask, request, render_template
+
+import torch
+import torch.nn.functional as F
+from torchvision import transforms
+
+from PIL import Image
+from werkzeug.utils import secure_filename
+from gevent.pywsgi import WSGIServer
+
+app = Flask(__name__)
 model = None
 MODEL_PATH = "https://drive.google.com/file/d/1IsCAWfcMqP7Rao8qX5Jlw0n7O3JYVmCz/view?usp=sharing"
 
@@ -31,27 +35,24 @@ def preprocess_image(image, target_size=(224,224)):
     image = image[None]
     return torch.autograd.Variable(image, volatile=True)
 
-def get_prediction(image_path):
-    image = open(image_path, 'rb').read()
-    img_dict = {'image':image}
-
-    r = requests.post(REST_API_URL, files=img_dict).json()
-
-    for (i, result) in enumerate(r['predictions']):
-        print('This is {} with {:.4f} probability'.format(result['label'],
-                                                          result['probability']))
-
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html')
 
+
 @app.route("/predict", methods=['GET','POST'])
 def predict():
 
-    if flask.request.method == 'POST':
-        if flask.request.files.get['file']:
-            image = flask.request.files['file']
-            image = Image.open(io.BytestIO(image))
+    if request.method == 'POST':
+        if request.files['file']:
+            f = flask.request.files['file']
+
+            basepath = os.path.dirname(__file__)
+            file_path = os.path.join(
+                basepath, 'images', secure_filename(f.filename))
+            f.save(file_path)
+
+            image = Image.open(io.BytestIO(file_path))
             image = preprocess_image(image)
 
             prediction = F.softmax(model(image))
@@ -66,11 +67,15 @@ def predict():
                 r = {"label": label_name, "probability": float(prob)}
                 data['predictions'].append(r)
 
-    return flask.jasonify(data)
+            for (i, result) in enumerate(r['predictions']):
+                print('This is {} with {:.4f} probability'.format(result['label'],
+                                                          result['probability']))
+    return None
 
 if __name__ == '__main__':
 	print("Loading PyTorch Hotdog Classifier Model...")
 	load_model()
-	app.run()
+	http_server = WSGIServer(('', 5000), app)
+    http_server.serve_forever()
 
 
