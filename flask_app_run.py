@@ -75,6 +75,7 @@ def predict():
 
 if __name__ == '__main__':
     print("Loading PyTorch Hotdog Classifier Model...")
+    app.run(port=5002, debug=True)
     load_model()
     http_server = WSGIServer(('', 5000), app)
     http_server.serve_forever()
