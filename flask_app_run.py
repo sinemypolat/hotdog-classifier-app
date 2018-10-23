@@ -67,15 +67,15 @@ def predict():
                 r = {"label": label_name, "probability": float(prob)}
                 data['predictions'].append(r)
 
-            for (i, result) in enumerate(r['predictions']):
+            for (i, result) in enumerate(data['predictions']):
                 print('This is {} with {:.4f} probability'.format(result['label'],
                                                           result['probability']))
     return None
 
 if __name__ == '__main__':
-	print("Loading PyTorch Hotdog Classifier Model...")
-	load_model()
-	http_server = WSGIServer(('', 5000), app)
+    print("Loading PyTorch Hotdog Classifier Model...")
+    load_model()
+    http_server = WSGIServer(('', 5000), app)
     http_server.serve_forever()
 
 
