@@ -37,7 +37,7 @@ def get_prediction(image_path):
 
     r = requests.post(REST_API_URL, files=img_dict).json()
 
-    for (i, result) in enumerate(r['predictions'])
+    for (i, result) in enumerate(r['predictions']):
         print('This is {} with {:.4f} probability'.format(result['label'],
                                                           result['probability']))
 
