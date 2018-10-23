@@ -9,7 +9,7 @@ import io
 
 app = flask.Flask(__name__)
 model = None
-MODEL_PATH = "../model/model.pt"
+MODEL_PATH = "https://drive.google.com/file/d/1IsCAWfcMqP7Rao8qX5Jlw0n7O3JYVmCz/view?usp=sharing"
 
 
 
