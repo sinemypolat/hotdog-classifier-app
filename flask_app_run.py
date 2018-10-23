@@ -23,7 +23,7 @@ def load_model():
     global model
     model = torch.load(MODEL_PATH)
     model.eval()
-    print('Model loaded. Check http://127.0.0.1:5000/')
+    # print('Model loaded. Check http://127.0.0.1:5000/')
 
 def preprocess_image(image, target_size=(224,224)):
     "Preprocess a given image and transform it before feed to the model"
@@ -53,7 +53,7 @@ def predict():
                 basepath, 'images', secure_filename(f.filename))
             f.save(file_path)
 
-            image = Image.open(io.BytestIO(file_path))
+            image = Image.open(file_path)
             image = preprocess_image(image)
 
             prediction = F.softmax(model(image))
@@ -69,7 +69,7 @@ def predict():
                 data['predictions'].append(r)
 
             for (i, result) in enumerate(data['predictions']):
-                print('This is {} with {:.4f} probability'.format(result['label'],
+                print('This is {} with {:.4f} probability.'.format(result['label'],
                                                           result['probability']))
     return None
 
