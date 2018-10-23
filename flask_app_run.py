@@ -1,3 +1,4 @@
+from __future__ import division, print_function
 import io
 import os
 
@@ -13,7 +14,7 @@ from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 model = None
-MODEL_PATH = "https://drive.google.com/file/d/1IsCAWfcMqP7Rao8qX5Jlw0n7O3JYVmCz/view?usp=sharing"
+MODEL_PATH = os.path.join(os.getcwd(),'models/model.pt')
 
 
 def load_model():
