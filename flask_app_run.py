@@ -38,7 +38,7 @@ def preprocess_image(image, target_size=(224,224)):
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('templates/index.html')
 
 
 @app.route("/predict", methods=['GET','POST'])
