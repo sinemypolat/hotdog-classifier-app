@@ -2,7 +2,7 @@ from __future__ import division, print_function
 import io
 import os
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 
 import torch
 import torch.nn.functional as F
@@ -13,6 +13,7 @@ from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
+app.debug = True
 model = None
 MODEL_PATH = os.path.join(os.getcwd(),'models/model.pt')
 
@@ -38,46 +39,50 @@ def preprocess_image(image, target_size=(224,224)):
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('templates/index.html')
+    return render_template('index.html')
 
 
 @app.route("/predict", methods=['GET','POST'])
 def predict():
 
-    if request.method == 'POST':
-        if request.files['file']:
-            f = flask.request.files['file']
+    if request.method == 'POST' and request.files['file']:
+        f = request.files['file']
 
-            basepath = os.path.dirname(__file__)
-            file_path = os.path.join(
-                basepath, 'images', secure_filename(f.filename))
-            f.save(file_path)
+        basepath = os.path.dirname(__file__)
+        file_path = os.path.join(
+            basepath, 'images', secure_filename(f.filename))
+        f.save(file_path)
 
-            image = Image.open(file_path)
-            image = preprocess_image(image)
+        image = Image.open(file_path)
+        image = preprocess_image(image)
 
-            prediction = F.softmax(model(image))
-            results = torch.topk(prediction.data, k=2)
+        prediction = F.softmax(model(image))
+        results = torch.topk(prediction.data, k=2)
 
-            data = {}
-            data['predictions'] = list()
-            labels = ["Hot Dog", "Not Hot Dog"]
+        data = []
+        labels = ["Hot Dog", "Not Hot Dog"]
 
-            for prob, label in zip(results[0][0], results[1][0]):
-                label_name = labels[label]
-                r = {"label": label_name, "probability": float(prob)}
-                data['predictions'].append(r)
+        for prob, label in zip(results[0][0], results[1][0]):
+            label_name = labels[label]
+            r = {"label": label_name, "probability": round(float(prob),3)}
+            data.append(r)
 
-            for (i, result) in enumerate(data['predictions']):
-                print('This is {} with {:.4f} probability.'.format(result['label'],
-                                                          result['probability']))
+        for result in data:
+            print('This is {} with {:.4f} probability.'.format(result['label'], 
+                result['probability']))
+
+        json_data = jsonify(data)
+        print (json_data.get_json())
+
+        return json_data
+
     return None
 
 if __name__ == '__main__':
     print("Loading PyTorch Hotdog Classifier Model...")
-    app.run(port=5002, debug=True)
+    #app.run(port=5002, debug=True)
     load_model()
-    http_server = WSGIServer(('', 5000), app)
+    http_server = WSGIServer(('localhost', 5000), app)
     http_server.serve_forever()
 
 

@@ -43,9 +43,16 @@ $(document).ready(function () {
             async: true,
             success: function (data) {
                 // Get and display the result
+
+                console.log(data);
+
+                data.forEach (function (item) {
+                    var line = "This is " + item.label + " with the probability of " + item.probability;
+                    $( "#result").append("<p>" + line + "</p>");
+                });
+
                 $('.loader').hide();
                 $('#result').fadeIn(600);
-                $('#result').text(' Result:  ' + data);
                 console.log('Success!');
             },
         });
