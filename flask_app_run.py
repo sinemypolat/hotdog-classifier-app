@@ -10,7 +10,7 @@ from torchvision import transforms
 
 from PIL import Image
 from werkzeug.utils import secure_filename
-# from gevent.pywsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 app.debug = True
@@ -82,7 +82,8 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print("Port number is :", port)
     load_model()
-    app.run(host='0.0.0.0', port=port, debug=True)
-    # WSGIServer(('', port), app).serve_forever()
+    # app.run(host='0.0.0.0', port=port, debug=True)
+    http = WSGIServer(('', port), app)
+    http.serve_forever()
 
 
