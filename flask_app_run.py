@@ -82,6 +82,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print("Port number is :", port)
     load_model()
-    WSGIServer(('0.0.0.0', port), app).serve_forever()
+    app.run()
+    # WSGIServer(('', port), app).serve_forever()
 
 
