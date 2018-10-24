@@ -24,7 +24,6 @@ def load_model():
     global model
     model = torch.load(MODEL_PATH)
     model.eval()
-    # print('Model loaded. Check http://127.0.0.1:5000/')
 
 def preprocess_image(image, target_size=(224,224)):
     "Preprocess a given image and transform it before feed to the model"
@@ -80,9 +79,7 @@ def predict():
 
 if __name__ == '__main__':
     print("Loading PyTorch Hotdog Classifier Model...")
-    #app.run(port=5002, debug=True)
-    load_model()
-    http_server = WSGIServer(('', 5000), app)
-    http_server.serve_forever()
+    # load_model()
+    WSGIServer(('', 8000), app).serve_forever()
 
 
