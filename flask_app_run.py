@@ -59,7 +59,7 @@ def predict():
         results = torch.topk(prediction.data, k=2)
 
         data = []
-        labels = ["Hot Dog", "Not Hot Dog"]
+        labels = ["Hotdog", "Not Hotdog"]
 
         for prob, label in zip(results[0][0], results[1][0]):
             label_name = labels[label]
@@ -79,7 +79,7 @@ def predict():
 
 if __name__ == '__main__':
     print("Loading PyTorch Hotdog Classifier Model...")
-    # load_model()
-    WSGIServer(('', 8000), app).serve_forever()
+    load_model()
+    WSGIServer(('', 5000), app).serve_forever()
 
 
