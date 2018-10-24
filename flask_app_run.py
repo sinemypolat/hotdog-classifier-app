@@ -13,7 +13,6 @@ from werkzeug.utils import secure_filename
 from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
-app.debug = True
 model = None
 MODEL_PATH = os.path.join(os.getcwd(),'models/model.pt')
 
@@ -82,8 +81,8 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print("Port number is :", port)
     load_model()
-    # app.run(debug=True)
-    http = WSGIServer(('', port), app)
-    http.serve_forever()
+    app.run(debug=True, host='0.0.0.0', port=port)
+    # http = WSGIServer(('', port), app)
+    # http.serve_forever()
 
 
