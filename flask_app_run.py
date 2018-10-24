@@ -10,7 +10,7 @@ from torchvision import transforms
 
 from PIL import Image
 from werkzeug.utils import secure_filename
-from gevent.pywsgi import WSGIServer
+# from gevent.pywsgi import WSGIServer
 
 app = Flask(__name__)
 model = None
