@@ -79,7 +79,9 @@ def predict():
 
 if __name__ == '__main__':
     print("Loading PyTorch Hotdog Classifier Model...")
+    port = int(os.environ.get('PORT', 5000))
+    print("Port number is :", port)
     load_model()
-    WSGIServer(('', 5000), app).serve_forever()
+    WSGIServer(('0.0.0.0', port), app).serve_forever()
 
 
